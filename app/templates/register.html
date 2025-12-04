@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}Register - Ritual Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 col-lg-5 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0 text-center">Register</h2>
+            </div>
+            <div class="card-body">
+                <p class="text-muted text-center mb-4">
+                    Create an account to begin your journey of self-cultivation
+                </p>
+
+                <form method="POST" action="{{ url_for('register') }}">
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               placeholder="Choose a username (min. 3 characters)" 
+                               minlength="3" required autofocus>
+                        <div class="form-text">
+                            This will be your display name on the site.
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Choose a secure password (min. 6 characters)" 
+                               minlength="6" required>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="mb-3">
+                        <label for="password_confirm" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="password_confirm" 
+                               name="password_confirm" placeholder="Re-enter your password" 
+                               minlength="6" required>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            Create Account
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Login Link -->
+                <hr class="my-4">
+                <p class="text-center mb-0">
+                    Already have an account? 
+                    <a href="{{ url_for('login') }}" class="fw-bold">Login here</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Quote -->
+        <div class="card mt-4 border-0 bg-light">
+            <div class="card-body text-center">
+                <p class="mb-2 fst-italic">
+                    "To learn, and then have occasion to practice what you have learned—is this not satisfying?"
+                </p>
+                <p class="small text-muted mb-0">— Confucius, Analects 1.1</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Client-side password matching validation
+document.querySelector('form').addEventListener('submit', function(e) {
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('password_confirm').value;
+    
+    if (password !== confirmPassword) {
+        e.preventDefault();
+        alert('Passwords do not match. Please check and try again.');
+        document.getElementById('password_confirm').focus();
+    }
+});
+</script>
+{% endblock %}
+

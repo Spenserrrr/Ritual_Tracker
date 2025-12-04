@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Ritual Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <!-- Hero Section -->
+        <div class="text-center mb-5">
+            <h1 class="display-4 mb-3">Ritual Tracker</h1>
+            <p class="lead text-muted">Conquering the patterned self through ritual and reflection</p>
+        </div>
+
+        <!-- Introduction -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title">From Confucius to Your Daily Life</h3>
+                <p class="card-text">
+                    Here we meet <strong>Confucius (孔子 / Kongzi)</strong> not as a distant icon, but as a 
+                    teacher working with students on the messy, patterned reality of everyday life. His followers 
+                    later compiled the <strong>Analects (论语, Lúnyǔ)</strong> from brief, context-rich scenes so 
+                    that readers would be placed in the same reflective position as his original disciples.
+                </p>
+                <p class="card-text">
+                    Confucius's core insight is that we are shaped by <strong>patterns</strong>—habits, 
+                    family customs, and social conventions that feel like a “true self” but can trap us. 
+                    This site invites you to experiment with Confucian practice by logging “as-if” rituals 
+                    and reflections that help you notice, interrupt, and retrain those patterns over time.
+                </p>
+            </div>
+        </div>
+
+        <!-- What are Rituals? -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title">What Are Rituals in Confucian Practice?</h3>
+                <p class="card-text">
+                    For Confucius, <strong>ritual (礼, lǐ)</strong> is not empty tradition. It is a 
+                    deliberate, creative practice that opens an <em>“as-if” space</em> where people step 
+                    out of their usual roles and responses. In this space, they can feel, act, and relate 
+                    differently—training themselves for real-world transformation.
+                </p>
+                <ul>
+                    <li><strong>Breaking patterns:</strong> Rituals that deliberately disrupt fixed social 
+                        hierarchies and habits (as in mourning practices where all mourners are treated alike).</li>
+                    <li><strong>“As-if” spaces:</strong> Situations where you act as if someone absent is present, 
+                        or as if roles are reversed, to work through grief, anger, or resentment.</li>
+                    <li><strong>Everyday training:</strong> Greetings, table manners, or difficult conversations 
+                        treated as experiments in seeing from another's perspective.</li>
+                    <li><strong>Modern analogues:</strong> Classroom norms, therapy sessions, and family routines 
+                        can all function as Confucian rituals when they are used to reshape patterns rather than 
+                        simply reinforce them.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- The Four Cardinal Virtues -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title">The Four Cardinal Virtues</h3>
+                <p class="card-text">
+                    Our tracker organizes rituals around four key Confucian virtues. Each offers a lens for 
+                    sensing patterns and experimenting with new responses:
+                </p>
+                <div class="row g-3 mt-2">
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded">
+                            <h5><span class="chinese-text">仁</span> Ren - Benevolence</h5>
+                            <p class="small mb-0">A fluid capacity to sense what others need in the moment and 
+                            respond in a way that fosters genuine connection and care.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded">
+                            <h5><span class="chinese-text">义</span> Yi - Righteousness</h5>
+                            <p class="small mb-0">Acting fittingly in each situation, rather than clinging to 
+                            fixed rules or defending a rigid idea of your “true self.”</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded">
+                            <h5><span class="chinese-text">礼</span> Li - Propriety</h5>
+                            <p class="small mb-0">Designing and participating in rituals that unsettle habits, 
+                            open perspective, and make new forms of relationship possible.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 border rounded">
+                            <h5><span class="chinese-text">智</span> Zhi - Wisdom</h5>
+                            <p class="small mb-0">The practiced ability to read tones, gestures, histories, and 
+                            trajectories, and to improvise responses that move a situation toward harmony.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- How to Use This Site -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title">How to Use This Site</h3>
+                <ol>
+                    <li class="mb-2">
+                        <strong>Notice your patterns:</strong> Begin by paying attention to recurring ways 
+                        you react—in family, classrooms, friendships, and online. When you see a pattern, 
+                        design a small Confucian-style ritual that might interrupt it.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Log your rituals:</strong> Each time you carry out one of these experiments, 
+                        record it in your <a href="{{ url_for('rituals') }}">Ritual Log</a>. Include what you 
+                        did, how the “as-if” structure worked, and how others responded.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Reflect on training:</strong> For each entry, write honestly about what shifted, 
+                        what resisted change, and what you learned about yourself and others—this becomes your 
+                        own running commentary alongside the Analects.
+                    </li>
+                    <li class="mb-2">
+                        <strong>Track your cultivation:</strong> Visit your 
+                        <a href="{{ url_for('summary') }}">Summary</a> to see how your rituals and reflections 
+                        accumulate over time, tracing a path of ongoing self-cultivation rather than a fixed endpoint.
+                    </li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- Call to Action -->
+        <div class="text-center mb-5">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('rituals') }}" class="btn btn-primary btn-lg">
+                    Continue Your Practice
+                </a>
+                <p class="small text-muted mt-2">
+                    Welcome back, {{ current_user.username }} — keep training ren (仁) through ritual and reflection.
+                </p>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg me-2">
+                    Get Started
+                </a>
+                <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg">
+                    Login
+                </a>
+                <p class="small text-muted mt-2">
+                    Create an account to start logging your rituals and cultivating virtue
+                </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+
+{% block title %}Summary - Ritual Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <h1 class="mb-4">Your Cultivation Journey</h1>
+        
+        <!-- THIS WEEK Section -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">This Week <small class="fw-normal">({{ week_start.strftime('%b %d') }} - {{ (week_start + timedelta(days=6)).strftime('%b %d') }})</small></h3>
+            </div>
+            <div class="card-body">
+                <!-- Stats Row -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-3">
+                        <div class="text-center p-3 bg-light rounded">
+                            <div class="display-6 text-primary fw-bold">{{ total_rituals }}</div>
+                            <small class="text-muted">Rituals</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-center p-3 bg-light rounded">
+                            <div class="display-6 fw-bold {% if week_change > 0 %}text-success{% elif week_change < 0 %}text-danger{% else %}text-muted{% endif %}">
+                                {% if week_change > 0 %}+{% endif %}{{ week_change }}
+                            </div>
+                            <small class="text-muted">vs Last Week</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-center p-3 bg-light rounded">
+                            <div class="display-6 text-warning fw-bold">{{ streak }} <span>&#128293;</span></div>
+                            <small class="text-muted">Day Streak</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="text-center p-3 bg-light rounded">
+                            <div class="display-6 text-info fw-bold">{{ days_practiced }}/7</div>
+                            <small class="text-muted">Days Active</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Virtue Cultivation Cards (This Week) -->
+                <h5 class="mb-3">Virtue Cultivation (This Week)</h5>
+                <div class="row g-3">
+                    {% for virtue, score in virtue_metrics.items() %}
+                        <div class="col-6 col-md-3">
+                            <div class="card text-center h-100 border-primary">
+                                <div class="card-body py-3">
+                                    <div class="fs-2 mb-1">
+                                        {% if virtue == 'Ren' %}仁{% elif virtue == 'Yi' %}义{% elif virtue == 'Li' %}礼{% elif virtue == 'Zhi' %}智{% endif %}
+                                    </div>
+                                    <div class="fw-bold">{{ virtue }}</div>
+                                    <div class="fs-4 {% if score > 0 %}text-primary{% else %}text-muted{% endif %}">
+                                        {{ "%.1f"|format(score) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                <div class="text-muted small mt-2">
+                    <em>Primary virtue +1 point, Secondary +0.5 per ritual logged</em>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALL-TIME JOURNEY Section -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0">Your Journey (All-Time)</h3>
+            </div>
+            <div class="card-body">
+                <!-- Stats Row -->
+                <div class="row g-3 mb-4">
+                    <div class="col-6 col-md-4">
+                        <div class="text-center p-3 bg-light rounded">
+                            <div class="display-6 text-primary fw-bold">{{ all_time.total_logs }}</div>
+                            <small class="text-muted">Total Rituals</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="text-center p-3 bg-light rounded">
+                            <div class="display-6 text-info fw-bold">{{ all_time.days_on_journey }}</div>
+                            <small class="text-muted">Days on Journey</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-4">
+                        <div class="text-center p-3 bg-light rounded">
+                            <div class="display-6 text-warning fw-bold">{{ all_time.longest_streak }} <span>&#128293;</span></div>
+                            <small class="text-muted">Best Streak</small>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if all_time.most_practiced %}
+                    <div class="alert alert-light mb-4">
+                        <strong>Most Practiced:</strong> {{ all_time.most_practiced.name }} 
+                        <span class="badge bg-primary">{{ all_time.most_practiced.count }} times</span>
+                    </div>
+                {% endif %}
+
+                <!-- All-Time Virtue Cultivation -->
+                <h5 class="mb-3">All-Time Virtue Cultivation</h5>
+                <div class="row g-3 mb-4">
+                    {% for virtue, score in all_time.virtue_metrics.items() %}
+                        <div class="col-6 col-md-3">
+                            <div class="card text-center h-100 border-primary">
+                                <div class="card-body py-3">
+                                    <div class="fs-3 mb-1">
+                                        {% if virtue == 'Ren' %}仁{% elif virtue == 'Yi' %}义{% elif virtue == 'Li' %}礼{% elif virtue == 'Zhi' %}智{% endif %}
+                                    </div>
+                                    <div class="fw-bold text-muted">{{ virtue }}</div>
+                                    <div class="fs-4 text-primary fw-bold">
+                                        {{ "%.1f"|format(score) }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Weekly Trend Chart -->
+                <h5 class="mb-3">Weekly Progress</h5>
+                <div style="height: 200px;">
+                    <canvas id="weeklyTrendChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- REFLECTION JOURNAL Section -->
+        <div class="card mb-4 shadow-sm border-warning">
+            <div class="card-header bg-warning d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Reflection Journal</h3>
+                <span class="badge bg-dark">{{ all_time.total_reflections }} total</span>
+            </div>
+            <div class="card-body">
+                <!-- New Reflection Form -->
+                <form method="POST" action="{{ url_for('summary') }}" class="mb-4">
+                    <div class="mb-3">
+                        <label for="reflection" class="form-label fw-bold">Add a Reflection</label>
+                        <textarea class="form-control" id="reflection" name="reflection" rows="4" 
+                                  placeholder="What patterns did you notice in yourself today? What virtues did your actions train? What small shift could you try next time?"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-warning">Save Reflection</button>
+                </form>
+
+                <!-- Reflections List -->
+                {% if reflections %}
+                    <h6 class="text-muted mb-3">Your Reflections</h6>
+                    {% for reflection in reflections %}
+                        <div class="card mb-2 bg-light">
+                            <div class="card-body py-2">
+                                <p class="mb-1">{{ reflection.reflection_text }}</p>
+                                <small class="text-muted">{{ reflection.created_at.strftime('%b %d, %Y at %H:%M') }}</small>
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    <!-- Pagination Controls -->
+                    {% if reflection_pagination.pages > 1 %}
+                        <nav aria-label="Reflection pagination" class="mt-3">
+                            <ul class="pagination justify-content-center mb-0">
+                                <!-- Previous -->
+                                <li class="page-item {% if not reflection_pagination.has_prev %}disabled{% endif %}">
+                                    <a class="page-link" href="{{ url_for('summary', page=reflection_pagination.prev_num) if reflection_pagination.has_prev else '#' }}">
+                                        &laquo; Previous
+                                    </a>
+                                </li>
+                                
+                                <!-- Page Numbers -->
+                                {% for p in reflection_pagination.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+                                    {% if p %}
+                                        <li class="page-item {% if p == reflection_pagination.page %}active{% endif %}">
+                                            <a class="page-link" href="{{ url_for('summary', page=p) }}">{{ p }}</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled"><span class="page-link">...</span></li>
+                                    {% endif %}
+                                {% endfor %}
+                                
+                                <!-- Next -->
+                                <li class="page-item {% if not reflection_pagination.has_next %}disabled{% endif %}">
+                                    <a class="page-link" href="{{ url_for('summary', page=reflection_pagination.next_num) if reflection_pagination.has_next else '#' }}">
+                                        Next &raquo;
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        <p class="text-center text-muted small mt-2">
+                            Page {{ reflection_pagination.page }} of {{ reflection_pagination.pages }}
+                        </p>
+                    {% endif %}
+                {% else %}
+                    <p class="text-muted mb-0">
+                        <em>"Daily examine yourself on three points: In counseling others, have I been loyal? In relationships with friends, have I been trustworthy? Have I practiced what I have learned?"</em>
+                        <br><small>— Zengzi, Analects 1.4</small>
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="text-center mb-4">
+            <a href="{{ url_for('rituals') }}" class="btn btn-primary">
+                Log a Ritual
+            </a>
+            <a href="{{ url_for('my_rituals') }}" class="btn btn-outline-primary">
+                Manage Rituals
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+new Chart(document.getElementById('weeklyTrendChart'), {
+    type: 'line',
+    data: {
+        labels: {{ weekly_trend | map(attribute='label') | list | tojson }},
+        datasets: [{
+            data: {{ weekly_trend | map(attribute='count') | list | tojson }},
+            borderColor: '#6B5B4F',
+            backgroundColor: 'rgba(107, 91, 79, 0.1)',
+            fill: true,
+            tension: 0.3
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: { y: { beginAtZero: true } }
+    }
+});
+</script>
+{% endblock %}

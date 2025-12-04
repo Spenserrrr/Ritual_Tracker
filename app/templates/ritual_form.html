@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}{{ action }} Ritual - Ritual Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 col-lg-6 mx-auto">
+        <h1 class="mb-4">{{ action }} Custom Ritual</h1>
+        
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="POST">
+                    <!-- Ritual Name (Required) -->
+                    <div class="mb-3">
+                        <label for="name" class="form-label">
+                            Ritual Name <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               value="{% if ritual %}{{ ritual.name }}{% endif %}" 
+                               placeholder="e.g., Family dinner ritual" required>
+                        <div class="form-text">Give your ritual a clear, memorable name that hints at what it works on.</div>
+                    </div>
+
+                    <!-- Description (Optional) -->
+                    <div class="mb-3">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea class="form-control" id="description" name="description" rows="3" 
+                                  placeholder="What does this ritual involve? What are the key steps or behaviors? What patterns is it meant to interrupt?">{% if ritual and ritual.description %}{{ ritual.description }}{% endif %}</textarea>
+                        <div class="form-text">Optional: Describe the concrete steps and the kind of pattern or reaction this ritual is meant to reshape.</div>
+                    </div>
+
+                    <!-- Primary Virtue Category (Optional) -->
+                    <div class="mb-3">
+                        <label for="primary_category" class="form-label">Primary Virtue Category</label>
+                        <select class="form-select" id="primary_category" name="primary_category">
+                            <option value="">-- None selected --</option>
+                            <option value="Ren" {% if ritual and ritual.primary_category == 'Ren' %}selected{% endif %}>
+                                仁 Ren - Benevolence
+                            </option>
+                            <option value="Yi" {% if ritual and ritual.primary_category == 'Yi' %}selected{% endif %}>
+                                义 Yi - Righteousness
+                            </option>
+                            <option value="Li" {% if ritual and ritual.primary_category == 'Li' %}selected{% endif %}>
+                                礼 Li - Propriety
+                            </option>
+                            <option value="Zhi" {% if ritual and ritual.primary_category == 'Zhi' %}selected{% endif %}>
+                                智 Zhi - Wisdom
+                            </option>
+                        </select>
+                        <div class="form-text">Optional: Primary Confucian virtue (+1 point per practice) that this ritual mainly trains.</div>
+                    </div>
+
+                    <!-- Secondary Virtue Category (Optional) -->
+                    <div class="mb-3">
+                        <label for="secondary_category" class="form-label">Secondary Virtue Category</label>
+                        <select class="form-select" id="secondary_category" name="secondary_category">
+                            <option value="">-- None selected --</option>
+                            <option value="Ren" {% if ritual and ritual.secondary_category == 'Ren' %}selected{% endif %}>
+                                仁 Ren - Benevolence
+                            </option>
+                            <option value="Yi" {% if ritual and ritual.secondary_category == 'Yi' %}selected{% endif %}>
+                                义 Yi - Righteousness
+                            </option>
+                            <option value="Li" {% if ritual and ritual.secondary_category == 'Li' %}selected{% endif %}>
+                                礼 Li - Propriety
+                            </option>
+                            <option value="Zhi" {% if ritual and ritual.secondary_category == 'Zhi' %}selected{% endif %}>
+                                智 Zhi - Wisdom
+                            </option>
+                        </select>
+                        <div class="form-text">Optional: Secondary virtue (+0.5 points per practice) that this ritual also touches.</div>
+                    </div>
+
+                    <!-- Source (Optional) -->
+                    <div class="mb-3">
+                        <label for="source" class="form-label">Source</label>
+                        <input type="text" class="form-control" id="source" name="source" 
+                               value="{% if ritual and ritual.source %}{{ ritual.source }}{% endif %}" 
+                               placeholder="e.g., Family tradition, Analects passage, Personal practice">
+                        <div class="form-text">Optional: Where did this idea come from (a text, a teacher, a family custom, your own experiment)?</div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                        <a href="{{ url_for('my_rituals') }}" class="btn btn-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            {{ action }} Ritual
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Helper Info -->
+        <div class="card mt-4 border-0 bg-light">
+            <div class="card-body">
+                <h6 class="card-title">Tips for Creating Rituals</h6>
+                <ul class="mb-0 small">
+                    <li>Make the name clear and memorable</li>
+                    <li>Describe the specific behaviors or actions involved</li>
+                    <li>Think about what patterned response this ritual is meant to interrupt or retrain</li>
+                    <li>Connect it to one or more Confucian virtues if applicable</li>
+                    <li>Note where you learned it from for future reflection</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

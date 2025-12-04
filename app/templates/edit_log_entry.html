@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Ritual Log - Ritual Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 col-lg-6 mx-auto">
+        <h1 class="mb-4">Edit Ritual Log Entry</h1>
+        
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <form method="POST">
+                    <!-- Original Date Display -->
+                    <div class="alert alert-info mb-3">
+                        <small>
+                            <strong>Original entry:</strong> {{ entry.created_at.strftime('%Y-%m-%d %H:%M') }}
+                        </small>
+                    </div>
+
+                    <!-- Ritual Selection -->
+                    <div class="mb-3">
+                        <label for="ritual_id" class="form-label">Ritual <span class="text-danger">*</span></label>
+                        <select class="form-select" id="ritual_id" name="ritual_id" required>
+                            <option value="">Choose a ritual...</option>
+                            {% for ritual in available_rituals %}
+                                <option value="{{ ritual.id }}" 
+                                        {% if entry.ritual_id == ritual.id %}selected{% endif %}
+                                        data-description="{{ ritual.description }}"
+                                        data-source="{{ ritual.source }}">
+                                    {{ ritual.name }}
+                                    {% if ritual.is_preset %}
+                                        (Preset)
+                                    {% else %}
+                                        (Custom)
+                                    {% endif %}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Ritual Info Display -->
+                    <div id="ritual_info" class="mb-3" style="display: {% if entry.ritual %}block{% else %}none{% endif %};">
+                        <div class="card bg-light">
+                            <div class="card-body">
+                                <p class="mb-1" id="ritual_description">{{ entry.ritual.description if entry.ritual else '' }}</p>
+                                <p class="mb-0 small text-muted" id="ritual_source">
+                                    {% if entry.ritual and entry.ritual.source %}Source: {{ entry.ritual.source }}{% endif %}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Context Selection -->
+                    <div class="mb-3">
+                        <label for="context" class="form-label">Context</label>
+                        <select class="form-select" id="context" name="context" required>
+                            <option value="">Choose context...</option>
+                            <option value="family" {% if entry.context == 'family' %}selected{% endif %}>Family</option>
+                            <option value="teacher" {% if entry.context == 'teacher' %}selected{% endif %}>Teacher</option>
+                            <option value="classmate" {% if entry.context == 'classmate' %}selected{% endif %}>Classmate</option>
+                            <option value="friend" {% if entry.context == 'friend' %}selected{% endif %}>Friend</option>
+                            <option value="stranger" {% if entry.context == 'stranger' %}selected{% endif %}>Stranger</option>
+                            <option value="self" {% if entry.context == 'self' %}selected{% endif %}>Self-Practice</option>
+                            <option value="community" {% if entry.context == 'community' %}selected{% endif %}>Community</option>
+                        </select>
+                    </div>
+
+                    <!-- Reflection -->
+                    <div class="mb-3">
+                        <label for="reflection" class="form-label">Reflection <span class="text-danger">*</span></label>
+                        <textarea class="form-control" id="reflection" name="reflection" rows="6" 
+                                  placeholder="Describe the situation and reflect on your experience..." required>{{ entry.reflection }}</textarea>
+                        <div class="form-text">
+                            Consider: What was the situation and context? What pattern were you in at the time? 
+                            How did the ritual change (or fail to change) your response, and what did you learn?
+                        </div>
+                    </div>
+
+                    <!-- Buttons -->
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-between">
+                        <a href="{{ url_for('rituals') }}" class="btn btn-secondary">
+                            Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            Update Ritual Log
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+

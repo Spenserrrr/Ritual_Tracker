@@ -1,0 +1,297 @@
+{% extends "base.html" %}
+
+{% block title %}My Rituals - Ritual Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <h1 class="mb-4">My Rituals</h1>
+        <p class="lead text-muted mb-4">
+            Design and manage the rituals you use to break patterns in your life. Start from shared examples 
+            or create custom “as-if” practices of your own.
+        </p>
+
+        <!-- Preset Rituals Section -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">Shared Preset Rituals</h3>
+                <span class="badge bg-light text-dark">{{ preset_rituals|length }} rituals</span>
+            </div>
+            <div class="card-body">
+                <p class="text-muted mb-3">
+                    These rituals draw on Confucian teachings and are available to all users as starting points 
+                    for practice.
+                </p>
+                
+                {% if preset_rituals %}
+                    <div class="row g-3">
+                        {% for ritual in preset_rituals %}
+                            <div class="col-md-6">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            {{ ritual.name }}
+                                        </h5>
+                                        <div class="mb-2">
+                                            {% if ritual.primary_category %}
+                                                <span class="badge bg-primary">{{ ritual.primary_category }}</span>
+                                                {% if ritual.secondary_category %}
+                                                    <span class="badge bg-info">{{ ritual.secondary_category }}</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+                                        <p class="card-text">{{ ritual.description }}</p>
+                                        {% if ritual.source %}
+                                            <p class="card-text">
+                                                <small class="text-muted">
+                                                    <strong>Source:</strong> {{ ritual.source }}
+                                                </small>
+                                            </p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">No preset rituals available.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Custom Rituals Section -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">My Custom Rituals</h3>
+                <button type="button" class="btn btn-light btn-sm" 
+                        data-bs-toggle="modal" data-bs-target="#createRitualModal">
+                    + Create New Ritual
+                </button>
+            </div>
+            <div class="card-body">
+                {% if custom_rituals %}
+                    <div class="row g-3">
+                        {% for ritual in custom_rituals %}
+                            <div class="col-md-6">
+                                <div class="card h-100 border-success">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between align-items-start mb-2">
+                                            <div>
+                                                <h5 class="card-title mb-1">{{ ritual.name }}</h5>
+                                                <div>
+                                                    {% if ritual.primary_category %}
+                                                        <span class="badge bg-primary">{{ ritual.primary_category }}</span>
+                                                        {% if ritual.secondary_category %}
+                                                            <span class="badge bg-info">{{ ritual.secondary_category }}</span>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                            <div class="btn-group btn-group-sm">
+                                                <button type="button" class="btn btn-outline-primary"
+                                                        data-bs-toggle="modal" data-bs-target="#editRitualModal{{ ritual.id }}">
+                                                    Edit
+                                                </button>
+                                                <button type="button" class="btn btn-outline-danger" 
+                                                        data-bs-toggle="modal" data-bs-target="#deleteModal{{ ritual.id }}">
+                                                    Delete
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        {% if ritual.description %}
+                                            <p class="card-text">{{ ritual.description }}</p>
+                                        {% endif %}
+                                        
+                                        {% if ritual.source %}
+                                            <p class="card-text">
+                                                <small class="text-muted">
+                                                    <strong>Source:</strong> {{ ritual.source }}
+                                                </small>
+                                            </p>
+                                        {% endif %}
+                                        
+                                        <p class="card-text">
+                                            <small class="text-muted">
+                                                Used {{ ritual.log_entries|length }} time(s)
+                                            </small>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">
+                        <h5 class="alert-heading">No Custom Rituals Yet</h5>
+                        <p class="mb-0">
+                            You haven't created any custom rituals yet. Try designing one small “as-if” practice 
+                            that could gently interrupt a familiar pattern.
+                        </p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Back to Ritual Log -->
+        <div class="text-center mt-4">
+            <a href="{{ url_for('rituals') }}" class="btn btn-primary">
+                Back to Ritual Log
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block modals %}
+<!-- Create Ritual Modal -->
+<div class="modal fade" id="createRitualModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title">Create Custom Ritual</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('create_ritual') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="create_name" class="form-label">Ritual Name <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control" id="create_name" name="name" 
+                               placeholder="e.g., Family dinner ritual" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="create_description" class="form-label">Description</label>
+                        <textarea class="form-control" id="create_description" name="description" rows="3"
+                                  placeholder="What does this ritual involve?"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="create_primary" class="form-label">Primary Virtue (+1 point)</label>
+                            <select class="form-select" id="create_primary" name="primary_category">
+                                <option value="">-- None --</option>
+                                <option value="Ren">仁 Ren - Benevolence</option>
+                                <option value="Yi">义 Yi - Righteousness</option>
+                                <option value="Li">礼 Li - Propriety</option>
+                                <option value="Zhi">智 Zhi - Wisdom</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="create_secondary" class="form-label">Secondary Virtue (+0.5 points)</label>
+                            <select class="form-select" id="create_secondary" name="secondary_category">
+                                <option value="">-- None --</option>
+                                <option value="Ren">仁 Ren - Benevolence</option>
+                                <option value="Yi">义 Yi - Righteousness</option>
+                                <option value="Li">礼 Li - Propriety</option>
+                                <option value="Zhi">智 Zhi - Wisdom</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="create_source" class="form-label">Source</label>
+                        <input type="text" class="form-control" id="create_source" name="source"
+                               placeholder="e.g., Family tradition, Personal practice">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">Create Ritual</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Ritual Modals -->
+{% for ritual in custom_rituals %}
+    <div class="modal fade" id="editRitualModal{{ ritual.id }}" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Edit Ritual</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="{{ url_for('edit_ritual', ritual_id=ritual.id) }}">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="edit_name_{{ ritual.id }}" class="form-label">Ritual Name <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="edit_name_{{ ritual.id }}" name="name" 
+                                   value="{{ ritual.name }}" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_description_{{ ritual.id }}" class="form-label">Description</label>
+                            <textarea class="form-control" id="edit_description_{{ ritual.id }}" name="description" 
+                                      rows="3">{{ ritual.description or '' }}</textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_primary_{{ ritual.id }}" class="form-label">Primary Virtue (+1 point)</label>
+                                <select class="form-select" id="edit_primary_{{ ritual.id }}" name="primary_category">
+                                    <option value="">-- None --</option>
+                                    <option value="Ren" {% if ritual.primary_category == 'Ren' %}selected{% endif %}>仁 Ren - Benevolence</option>
+                                    <option value="Yi" {% if ritual.primary_category == 'Yi' %}selected{% endif %}>义 Yi - Righteousness</option>
+                                    <option value="Li" {% if ritual.primary_category == 'Li' %}selected{% endif %}>礼 Li - Propriety</option>
+                                    <option value="Zhi" {% if ritual.primary_category == 'Zhi' %}selected{% endif %}>智 Zhi - Wisdom</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_secondary_{{ ritual.id }}" class="form-label">Secondary Virtue (+0.5 points)</label>
+                                <select class="form-select" id="edit_secondary_{{ ritual.id }}" name="secondary_category">
+                                    <option value="">-- None --</option>
+                                    <option value="Ren" {% if ritual.secondary_category == 'Ren' %}selected{% endif %}>仁 Ren - Benevolence</option>
+                                    <option value="Yi" {% if ritual.secondary_category == 'Yi' %}selected{% endif %}>义 Yi - Righteousness</option>
+                                    <option value="Li" {% if ritual.secondary_category == 'Li' %}selected{% endif %}>礼 Li - Propriety</option>
+                                    <option value="Zhi" {% if ritual.secondary_category == 'Zhi' %}selected{% endif %}>智 Zhi - Wisdom</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="edit_source_{{ ritual.id }}" class="form-label">Source</label>
+                            <input type="text" class="form-control" id="edit_source_{{ ritual.id }}" name="source"
+                                   value="{{ ritual.source or '' }}">
+                        </div>
+                        <div class="text-muted small">
+                            Used {{ ritual.log_entries|length }} time(s) in ritual logs.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
+<!-- Delete Confirmation Modals -->
+{% for ritual in custom_rituals %}
+    <div class="modal fade" id="deleteModal{{ ritual.id }}" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete "<strong>{{ ritual.name }}</strong>"?
+                    {% if ritual.log_entries %}
+                        <div class="alert alert-warning mt-2 mb-0">
+                            <strong>Warning:</strong> This ritual has been used {{ ritual.log_entries|length }} time(s). 
+                            You cannot delete it.
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    {% if not ritual.log_entries %}
+                        <form method="POST" action="{{ url_for('delete_ritual', ritual_id=ritual.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+{% endblock %}
+

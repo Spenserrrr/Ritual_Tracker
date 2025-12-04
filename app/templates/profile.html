@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}Profile - Ritual Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <h1 class="mb-4">My Profile</h1>
+        <p class="lead text-muted mb-4">
+            Manage your account settings and see how your ongoing practice is unfolding.
+        </p>
+
+        <div class="row g-4">
+            <!-- Account Details Card -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="mb-0">Account Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label text-muted small">Username</label>
+                            <p class="fs-4 mb-0 fw-bold">{{ current_user.username }}</p>
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label text-muted small">Member Since</label>
+                            <p class="fs-5 mb-0">{{ current_user.created_at.strftime('%B %d, %Y') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Streak Card -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100 border-warning">
+                    <div class="card-header bg-warning">
+                        <h3 class="mb-0">Current Streak</h3>
+                    </div>
+                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                        <div class="display-1 fw-bold text-warning">{{ stats.streak }}</div>
+                        <p class="fs-5 text-muted mb-0">
+                            {% if stats.streak == 1 %}day{% else %}days{% endif %} in a row
+                        </p>
+                        <p class="small text-muted mt-2 mb-0">
+                            {% if stats.streak == 0 %}
+                                Log a ritual today to start your streak!
+                            {% elif stats.streak < 7 %}
+                                Keep it going! 💪
+                            {% elif stats.streak < 30 %}
+                                Excellent consistency! 🌟
+                            {% else %}
+                                Incredible dedication!
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Change Password Card -->
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-secondary text-white d-flex justify-content-between align-items-center">
+                        <h3 class="mb-0">Change Password</h3>
+                        <button class="btn btn-sm btn-light" type="button" data-bs-toggle="collapse" 
+                                data-bs-target="#passwordForm" aria-expanded="false">
+                            Show/Hide
+                        </button>
+                    </div>
+                    <div class="collapse" id="passwordForm">
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('profile') }}">
+                                <input type="hidden" name="action" value="change_password">
+                                
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label for="current_password" class="form-label">Current Password</label>
+                                        <input type="password" class="form-control" id="current_password" 
+                                               name="current_password" required>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="new_password" class="form-label">New Password</label>
+                                        <input type="password" class="form-control" id="new_password" 
+                                               name="new_password" minlength="6" required>
+                                        <div class="form-text">Minimum 6 characters</div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="confirm_password" class="form-label">Confirm New Password</label>
+                                        <input type="password" class="form-control" id="confirm_password" 
+                                               name="confirm_password" minlength="6" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3">
+                                    <button type="submit" class="btn btn-primary">Update Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="text-center mt-4">
+            <a href="{{ url_for('summary') }}" class="btn btn-outline-primary">
+                View Summary
+            </a>
+            <a href="{{ url_for('rituals') }}" class="btn btn-primary">
+                Log a Ritual
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

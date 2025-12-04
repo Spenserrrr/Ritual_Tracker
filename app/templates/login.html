@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Login - Ritual Tracker{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 col-lg-5 mx-auto">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0 text-center">Login</h2>
+            </div>
+            <div class="card-body">
+                <p class="text-muted text-center mb-4">
+                    Sign in to continue your cultivation journey
+                </p>
+
+                <form method="POST" action="{{ url_for('login') }}">
+                    <!-- Username -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username</label>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               placeholder="Enter your username" required autofocus>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Enter your password" required>
+                    </div>
+
+                    <!-- Remember Me -->
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                        <label class="form-check-label" for="remember">
+                            Remember me
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            Login
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Register Link -->
+                <hr class="my-4">
+                <p class="text-center mb-0">
+                    Don't have an account? 
+                    <a href="{{ url_for('register') }}" class="fw-bold">Register here</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- Confucian Quote -->
+        <div class="card mt-4 border-0 bg-light">
+            <div class="card-body text-center">
+                <p class="mb-2 fst-italic">
+                    "The gentleman is ashamed to have his words exceed his actions."
+                </p>
+                <p class="small text-muted mb-0">— Confucius, Analects 14.27</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
