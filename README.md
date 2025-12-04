@@ -2,8 +2,6 @@
 
 A Flask web app for tracking Confucian ritual practices.
 
-**Video Demo:** https://www.youtube.com/watch?v=ycZUc-BC19g
-
 **Deployed on Render:** https://ritual-tracker.onrender.com
 
 Note: This is on Render's free tier, so the first request may be slow (server spins down after inactivity). The database will be inactive after ~30 days (~January 2026).
